@@ -1,0 +1,103 @@
+cidl: "0.8"
+info:
+  name: NFT_ID
+  title: Solana NFT ID
+  version: 0.0.1
+  license:
+    name: MIT licensed
+    identifier: PrivateLicensed
+types:
+  NFTMetadata:
+    summary: A Solana NFT ID program for issuing, transferring, and burning NFT ID card in a organization.
+    solana:
+      seeds:
+        - name: "id"
+        - name: mint
+          type: sol:pubkey
+    fields:
+      - name: E_id
+        type: u32
+      - name: company_name
+        type: string
+        solana:
+          attributes: [ cap:16 ]
+      - name: department_name
+        type: string
+        solana:
+          attributes: [ cap:16 ]
+      - name: employee_name
+        type: string
+        solana:
+          attributes: [ cap:16 ]
+      - name: emp_address
+        type: string
+        solana:
+          attributes: [ cap:255 ]
+      - name: emp_email
+        type: string
+        solana:
+          attributes: [ cap:16 ]
+      - name: emp_phone
+        type: string
+        solana:
+          attributes: [ cap:16 ]
+      - name: id_image_url
+        type: rs:option<string>
+        solana:
+          attributes: [ cap:96 ]     
+      - name: mint
+        type: sol:pubkey
+      - name: assoc_account
+        type: rs:option<sol:pubkey>
+methods:
+  - name: issue_id_card
+    uses:
+      - csl_spl_token.initialize_mint2
+      - csl_spl_assoc_token.create
+      - csl_spl_token.mint_to
+      - csl_spl_token.set_authority
+    inputs:
+      - name: mint
+        type: csl_spl_token.Mint
+        solana:
+          attributes: [ init ]
+      - name: id
+        type: NFTMetadata
+        solana:
+          attributes: [ init ]
+          seeds:
+            mint: mint
+      - name: E_id
+        type: u32
+      - name: employee_name
+        type: string
+      - name: emp_address
+        type: string
+      - name: emp_email
+        type: string    
+        
+  - name: claim_id_card
+    uses:
+      - csl_spl_assoc_token.create
+      - csl_spl_token.transfer_checked
+    inputs:
+      - name: mint
+        type: csl_spl_token.Mint
+      - name: id
+        type: NFTMetadata
+        solana:
+          attributes: [ mut ]
+          seeds:
+            mint: mint
+  - name: revoke_id_card
+    uses:
+      - csl_spl_token.burn
+    inputS:
+      - name: mint
+        type: csl_spl_token.Mint
+      - name: id
+        type: NFTMetadata
+        solana:
+          attributes: [ mut ]
+          seeds:
+            mint: mint
