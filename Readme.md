@@ -261,7 +261,7 @@ pub fn claim_id_card(
 
 ```
 
-# Setup the Solana devne config file 
+# Setup the Solana devnet config file 
 
 ```javascript
 solana config set --url devnet
